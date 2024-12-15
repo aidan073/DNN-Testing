@@ -3,15 +3,26 @@ from model import DNN
 from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader
 from torch.optim import AdamW
+from torch.optim import Adagrad
+from torch.optim import SGD
+from adabelief_pytorch import AdaBelief
 
-def train(train_data, val_data, batch_size, epochs):
+def train(train_data, val_data, batch_size, epochs, optimizer_name:str):
     model = DNN(train_data.data.shape[1])
     criterion = CrossEntropyLoss()
-    optimizer = AdamW(model.parameters(), lr=0.005)
-
+    if optimizer_name.lower() == "adamw":
+        optimizer = AdamW(model.parameters(), lr=0.002)
+    elif optimizer_name.lower() == "adabelief":
+        optimizer = AdaBelief(model.parameters(), lr=0.01)
+    elif optimizer_name.lower() == "sgd":
+        optimizer = SGD(model.parameters(), lr=0.3)
+    elif optimizer_name.lower() == "adagrad":
+        optimizer = Adagrad(model.parameters(), lr=0.02)
+        
     train_dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
     val_dataloader = DataLoader(val_data, batch_size=val_data.data.shape[0], shuffle=True)
     
+    print(f"\nStarting training with {optimizer_name} optimizer\n")
     for epoch in range(epochs):
         model.train()
         train_losses = []
