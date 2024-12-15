@@ -1,0 +1,4 @@
+adabelief_pytorch==0.2.1
+pandas==2.2.3
+scikit_learn==1.6.0
+torch==2.5.1
